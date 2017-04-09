@@ -5,7 +5,7 @@ class Api {
       'Content-Type': 'application/json',
       'dataType': 'json',
       'X-Requested-With': 'XMLHttpRequest',
-      'X-Mashape-Key': 'somethin'
+      'X-Mashape-Key': 'something'
     }
   }
 

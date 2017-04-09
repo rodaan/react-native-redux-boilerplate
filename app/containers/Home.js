@@ -12,8 +12,18 @@ const {
 import { connect } from 'react-redux';
 
 class Home extends Component {
+  constructor(props) {
+    super(props); //calls constructor on Component
+    this.state = {
+      ingredientsInput: '',
+      searching: false
+    }
+  }
   searchPressed(){
-    this.props.fetchRecipes('bacon,cucumber,banana');
+    this.setState({searching: true});
+    this.props.fetchRecipes(this.state.ingredientsInput).then( () => {
+      this.setState({searching: false});
+    });
   }
 
   recipes(){
@@ -24,17 +34,24 @@ class Home extends Component {
     console.log(this.recipes());
     return <View style={styles.scene}>
       <View style={styles.searchSection}>
-        <TouchableHighlight onPress={ () => this.searchPressed() }>
+        <TextInput style={styles.searchInput}
+          returnKeyType='search'
+          placeholder='Ingredients (comma delimited)'
+          onChangeText={(ingredientsInput) => this.setState({ingredientsInput})}
+          value={this.state.ingredientsInput}
+        />
+        <TouchableHighlight style={styles.searchButton} onPress={ () => this.searchPressed() }>
           <Text>Fetch Recipes</Text>
         </TouchableHighlight>
       </View>
       <ScrollView style={styles.scrollSection}>
-        {this.recipes().map((recipe) => {
+        {!this.state.searching && this.recipes().map((recipe) => {
           return <View key={recipe.id}>
             <Image source={{uri: recipe.image}} style={styles.resultImage} />
             <Text style={styles.resultText}>{recipe.title}</Text>
           </View>
         })}
+        { this.state.searching ? <Text> Searching... </Text> : null}
       </ScrollView>
     </View>
   }
@@ -50,6 +67,13 @@ const styles = StyleSheet.create({
     borderBottomColor: '#000',
     borderBottomWidth: 1,
     padding: 5,
+    flexDirection: 'row'
+  },
+  searchInput: {
+    flex: 0.7
+  },
+  searchButton: {
+    flex: 0.3
   },
   scrollSection: {
     flex: 0.8
